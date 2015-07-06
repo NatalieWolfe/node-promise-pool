@@ -1,0 +1,11 @@
+{
+    "source": {
+        "includePattern": "\\.js(?:doc)?$",
+        "exclude": [
+            "node_modules"
+        ]
+    },
+    "plugins": [
+        "plugins/markdown"
+    ]
+}
