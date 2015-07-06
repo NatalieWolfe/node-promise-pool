@@ -4,6 +4,7 @@
   "description": "Promise-based connection pooling library built on generic-pool.",
   "main": "index.js",
   "scripts": {
+    "docs": "./node_modules/.bin/jsdoc2md lib/*.js > docs.md",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,5 +27,8 @@
   "homepage": "https://github.com/NatalieWolfe/node-promise-pool#readme",
   "engines": {
     "node": ">=0.11.14"
+  },
+  "devDependencies": {
+    "jsdoc-to-markdown": "^1.1.1"
   }
 }
