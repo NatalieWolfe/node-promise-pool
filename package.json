@@ -1,0 +1,30 @@
+{
+  "name": "generic-promise-pool",
+  "version": "0.0.0",
+  "description": "Promise-based connection pooling library built on generic-pool.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/NatalieWolfe/node-promise-pool.git"
+  },
+  "keywords": [
+    "promise",
+    "pool",
+    "pooling",
+    "generic-pool",
+    "connection",
+    "connection pooling"
+  ],
+  "author": "Natalie Wolfe <natalie@lifewanted.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NatalieWolfe/node-promise-pool/issues"
+  },
+  "homepage": "https://github.com/NatalieWolfe/node-promise-pool#readme",
+  "engines": {
+    "node": ">=0.11.14"
+  }
+}
