@@ -6,7 +6,7 @@ try {
     var PromisePool = require('../../lib-cov/PromisePool');
 }
 catch (err) {
-    var PromisePool = require('../../lib/PromisePool');    
+    var PromisePool = require('../../lib/PromisePool');
 }
 
 describe('PromisePool', function(){
@@ -17,7 +17,6 @@ describe('PromisePool', function(){
             name: 'test-pool',
             max: 100,
             min: 10,
-            log: false,
             create: function(){ return {}; },
             destroy: function(obj){}
         });
@@ -30,6 +29,21 @@ describe('PromisePool', function(){
     describe('constructor', function(){
         it('should create a pool', function(){
             pool.should.be.an.instanceOf(PromisePool);
+        });
+
+        it('should accept a logging function', function(){
+            var logCount = 0;
+            var pool2 = new PromisePool({
+                log: function(msg, level){ ++logCount; },
+                create: function(){ return {}; },
+                destroy: function(obj){}
+            });
+
+            return pool2.acquire(function(conn){
+                return Promise.resolve();
+            }).then(function(){
+                logCount.should.be.greaterThan(0);
+            });
         });
     });
 
@@ -76,6 +90,18 @@ describe('PromisePool', function(){
             }).then(function(){
                 conn.should.equal(conn2);
             });
+        });
+
+        it('should refuse to acquire while draining', function(){
+            var drain = pool.drain();
+
+            should.throws(function(){
+                pool.acquire(function(conn){
+                    should.not.exist(conn);
+                });
+            });
+
+            return drain;
         });
     });
 });
