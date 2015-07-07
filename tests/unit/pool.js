@@ -80,6 +80,7 @@ describe('PromisePool', function(){
                 var prom = pool2.acquire(function(_conn2){
                     conn2 = _conn2;
                     conn.should.equal(conn2);
+                    return Promise.resolve();
                 });
 
                 return new Promise(function(res){
@@ -98,6 +99,9 @@ describe('PromisePool', function(){
             should.throws(function(){
                 pool.acquire(function(conn){
                     should.not.exist(conn);
+                    return Promise.resolve();
+                }).catch(function(err){
+                    throw err;
                 });
             });
 
