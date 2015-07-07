@@ -41,9 +41,35 @@ describe('PromisePool', function(){
             return pool.acquire(function(conn){
                 return pool.acquire(function(conn2){
                     conn.should.not.equal(conn2);
-
-                return Promise.resolve();
+                    return Promise.resolve();
                 });
+            });
+        });
+
+        it('should queue requests when out of connections', function(){
+            var pool2 = new PromisePool({
+                max: 1,
+                create: function(){ return {}; },
+                destroy: function(){}
+            });
+
+            var conn = null;
+            var conn2 = null;
+            return pool2.acquire(function(_conn){
+                conn = _conn;
+
+                var prom = pool2.acquire(function(_conn2){
+                    conn2 = _conn2;
+                    conn.should.equal(conn2);
+                });
+
+                return new Promise(function(res){
+                    setTimeout(res, 10);
+                }).then(function(){
+                    should.not.exist(conn2);
+                });
+            }).then(function(){
+                conn.should.equal(conn2);
             });
         });
     });
