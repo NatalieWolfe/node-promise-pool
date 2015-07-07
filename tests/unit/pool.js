@@ -122,6 +122,46 @@ describe('PromisePool', function(){
             }).catch(function(err){
                 err.should.eql('bizbang');
             });
-        })
+        });
+
+        it('should handle errors thrown in callback', function(){
+            return pool.acquire(function(conn){
+                throw 'Oh NO!';
+            }).catch(function(err){
+                err.should.eql('Oh NO!');
+            });
+        });
+    });
+
+    describe('#release', function(){
+        it('should gracefully refuse to double double release', function(){
+            return pool.acquire(function(conn){
+                pool.release(conn);
+                return Promise.resolve();
+            });
+        });
+
+        it('should return resources to the front when returnToHead is true', function(){
+            var counter = 0;
+            var headPool = new PromisePool({
+                max: 5,
+                min: 3,
+                returnToHead: true,
+                create: function(){ return {id: ++counter}; },
+                destroy: function(conn){}
+            });
+
+            var conn = null;
+            return headPool.acquire(function(_conn){
+                conn = _conn;
+                return Promise.resolve();
+            }).then(function(){
+                return headPool.acquire(function(conn2){
+                    conn.should.equal(conn2);
+                    conn.id.should.eql(conn2.id);
+                    return Promise.resolve();
+                });
+            });
+        });
     });
 });
