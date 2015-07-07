@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+    - "stable"
+    - "iojs"
+    - "0.12"
+
+branches:
+    only:
+        - master
+        - /^v\d+\.\d+/
