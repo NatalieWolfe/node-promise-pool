@@ -107,5 +107,21 @@ describe('PromisePool', function(){
 
             return drain;
         });
+
+        it('should propagate the results of the callback', function(){
+            return pool.acquire(function(conn){
+                return Promise.resolve('foobar');
+            }).then(function(res){
+                res.should.eql('foobar');
+            });
+        });
+
+        it('should propagate errors of the callback', function(){
+            return pool.acquire(function(conn){
+                return Promise.reject('bizbang');
+            }).catch(function(err){
+                err.should.eql('bizbang');
+            });
+        })
     });
 });
