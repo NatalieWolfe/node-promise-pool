@@ -1,4 +1,4 @@
-# Promise Pool ![Build Status][1]
+# Promise Pool [![Build Status][1]](https://travis-ci.org/NatalieWolfe/node-promise-pool) [![Coverage Status][2]](https://coveralls.io/r/NatalieWolfe/node-promise-pool)
 Promise-based connection pooling library built on generic-pool.
 
 ## Installation
@@ -54,4 +54,5 @@ mysqlPool.drain()
     });
 ```
 
-[1]: https://travis-ci.org/NatalieWolfe/node-promise-pool.svg?branch=master)](https://travis-ci.org/NatalieWolfe/node-promise-pool
+[1]: https://travis-ci.org/NatalieWolfe/node-promise-pool.svg?branch=master
+[2]: https://coveralls.io/repos/NatalieWolfe/node-promise-pool/badge.svg
