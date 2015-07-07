@@ -1,4 +1,4 @@
-# Promise Pool
+# Promise Pool ![Build Status][1]
 Promise-based connection pooling library built on generic-pool.
 
 ## Installation
@@ -53,3 +53,5 @@ mysqlPool.drain()
         console.log('The pool has drained, and all connections destroyed.');
     });
 ```
+
+[1]: https://travis-ci.org/NatalieWolfe/node-promise-pool.svg?branch=master)](https://travis-ci.org/NatalieWolfe/node-promise-pool
