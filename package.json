@@ -4,7 +4,6 @@
   "description": "Promise-based connection pooling library built on generic-pool.",
   "main": "index.js",
   "scripts": {
-    "coverage": "./node_modules/.bin/mocha -R mocha-lcov-reporter --recursive tests/unit | ./node_modules/.bin/coveralls",
     "docs": "./node_modules/.bin/jsdoc2md lib/*.js > docs.md",
     "test": "./node_modules/.bin/mocha --recursive tests/unit"
   },
@@ -31,6 +30,7 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
+    "jscoverage": "^0.5.9",
     "jsdoc-to-markdown": "^1.1.1",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "0.0.2",

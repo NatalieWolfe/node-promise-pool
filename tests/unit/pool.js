@@ -2,7 +2,12 @@
 
 var should = require('should');
 
-var PromisePool = require('../..').PromisePool;
+try {
+    var PromisePool = require('../../lib-cov/PromisePool');
+}
+catch (err) {
+    var PromisePool = require('../../lib/PromisePool');    
+}
 
 describe('PromisePool', function(){
     var pool = null;
