@@ -203,8 +203,40 @@ describe('PromisePool', function(){
     });
 
     describe('#pooled', function(){
-        it('should wrap the function with an acquisition');
-        it('should call the wrapped function in the wrapper\'s context');
+        it('should wrap the function with an acquisition', function(){
+            var conn = null;
+            var func = pool.pooled(function(_conn, foo, bar){
+                conn = _conn;
+                foo.should.eql('foo');
+                bar.should.eql('bar');
+                return Promise.resolve('foobar');
+            });
+
+            func.should.be.a.function;
+            should.not.exist(conn);
+
+            return func('foo', 'bar').then(function(res){
+                res.should.eql('foobar');
+                should.exist(conn);
+            });
+        });
+
+        it('should call the wrapped function in the wrapper\'s context', function(){
+            var conn = null;
+            var obj = {
+                thisIsIt: true,
+                func: pool.pooled(function(_conn){
+                    conn = _conn;
+                    should.exist(this);
+                    this.thisIsIt.should.be.true;
+                    return Promise.resolve();
+                })
+            };
+
+            return obj.func('foo', 'bar').then(function(){
+                should.exist(conn);
+            });
+        });
     });
 
     describe('#length', function(){
