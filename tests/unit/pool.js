@@ -208,7 +208,22 @@ describe('PromisePool', function(){
     });
 
     describe('#length', function(){
-        it('should report the number of constructed resources');
+        it('should report the number of constructed resources', function(){
+            pool.length.should.eql(10);
+            smallPool.length.should.eql(0);
+
+            return smallPool.acquire(function(client){
+                smallPool.length.should.eql(1);
+                return Promise.resolve();
+            }).then(function(){
+                smallPool.length.should.eql(1);
+
+                return pool.acquire(function(client){
+                    pool.length.should.eql(10);
+                    return Promise.resolve();
+                });
+            });
+        });
     });
 
     describe('#name', function(){
