@@ -11,6 +11,7 @@ catch (err) {
 
 describe('PromisePool', function(){
     var pool = null;
+    var smallPool = null;
 
     beforeEach(function(){
         pool = new PromisePool({
@@ -20,10 +21,21 @@ describe('PromisePool', function(){
             create: function(){ return {}; },
             destroy: function(obj){}
         });
+
+        smallPool = new PromisePool({
+            name: 'small-pool',
+            max: 1,
+            min: 0,
+            create: function(){ return {}; },
+            destroy: function(obj){}
+        });
     });
 
     afterEach(function(){
-        pool.drain();
+        return Promise.all([
+            pool.drain(),
+            smallPool.drain()
+        ]);
     });
 
     describe('constructor', function(){
@@ -74,10 +86,11 @@ describe('PromisePool', function(){
 
             var conn = null;
             var conn2 = null;
+            var prom = null;
             return pool2.acquire(function(_conn){
                 conn = _conn;
 
-                var prom = pool2.acquire(function(_conn2){
+                prom = pool2.acquire(function(_conn2){
                     conn2 = _conn2;
                     conn.should.equal(conn2);
                     return Promise.resolve();
@@ -88,7 +101,8 @@ describe('PromisePool', function(){
                 }).then(function(){
                     should.not.exist(conn2);
                 });
-            }).then(function(){
+            }).then(function(){ return prom; }).then(function(){
+                should.exist(conn2);
                 conn.should.equal(conn2);
             });
         });
@@ -159,6 +173,19 @@ describe('PromisePool', function(){
                 return headPool.acquire(function(conn2){
                     conn.should.equal(conn2);
                     conn.id.should.eql(conn2.id);
+                    return Promise.resolve();
+                });
+            });
+        });
+
+        it('should not return destroyed objects to the pool', function(){
+            var conn = null;
+            return smallPool.acquire(function(_conn){
+                conn = _conn;
+                return smallPool.destroy(conn);
+            }).then(function(){
+                return smallPool.acquire(function(conn2){
+                    conn.should.not.equal(conn2);
                     return Promise.resolve();
                 });
             });
