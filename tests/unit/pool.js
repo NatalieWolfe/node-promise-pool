@@ -234,7 +234,24 @@ describe('PromisePool', function(){
     });
 
     describe('#availableLength', function(){
-        it('should report the number of available resources');
+        it('should report the number of available resources', function(){
+            pool.availableLength.should.eql(10);
+            smallPool.availableLength.should.eql(0);
+
+            return smallPool.acquire(function(client){
+                smallPool.availableLength.should.eql(0);
+                return Promise.resolve();
+            }).then(function(){
+                smallPool.availableLength.should.eql(1);
+
+                return pool.acquire(function(client){
+                    pool.availableLength.should.eql(9);
+                    return Promise.resolve();
+                });
+            }).then(function(){
+                pool.availableLength.should.eql(10);
+            });
+        });
     });
 
     describe('#waitingClientLength', function(){
