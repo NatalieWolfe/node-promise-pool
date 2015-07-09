@@ -191,4 +191,43 @@ describe('PromisePool', function(){
             });
         });
     });
+
+    describe('#drain', function(){
+        it('should destroy all resources');
+        it('should supply all waiting clients first');
+        it('should wait for all resources to be returned');
+    });
+
+    describe('#destroyAllNow', function(){
+        it('should destroy all available resources');
+    });
+
+    describe('#pooled', function(){
+        it('should wrap the function with an acquisition');
+        it('should call the wrapped function in the wrapper\'s context');
+    });
+
+    describe('#length', function(){
+        it('should report the number of constructed resources');
+    });
+
+    describe('#name', function(){
+        it('should return the name of the pool');
+    });
+
+    describe('#availableLength', function(){
+        it('should report the number of available resources');
+    });
+
+    describe('#waitingClientLength', function(){
+        it('should report the number of clients waiting for resources');
+    });
+
+    describe('#max', function(){
+        it('should return the maximum number of resources the pool will create');
+    });
+
+    describe('#min', function(){
+        it('should return the minimum number of resources the pool will keep');
+    });
 });
