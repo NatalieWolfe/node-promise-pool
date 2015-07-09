@@ -1,4 +1,8 @@
 
+## v1.0.2 - 2015-07-08
+ - Bug fixes.
+ - Expanded test coverage.
+
 ## v1.0.1 - 2015-07-06
  - Bug fixes.
 
