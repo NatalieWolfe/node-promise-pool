@@ -212,7 +212,10 @@ describe('PromisePool', function(){
     });
 
     describe('#name', function(){
-        it('should return the name of the pool');
+        it('should return the name of the pool', function(){
+            pool.name.should.eql('test-pool');
+            smallPool.name.should.eql('small-pool');
+        });
     });
 
     describe('#availableLength', function(){
@@ -224,10 +227,16 @@ describe('PromisePool', function(){
     });
 
     describe('#max', function(){
-        it('should return the maximum number of resources the pool will create');
+        it('should return the maximum number of resources the pool will create', function(){
+            pool.max.should.eql(100);
+            smallPool.max.should.eql(1);
+        });
     });
 
     describe('#min', function(){
-        it('should return the minimum number of resources the pool will keep');
+        it('should return the minimum number of resources the pool will keep', function(){
+            pool.min.should.eql(10);
+            smallPool.min.should.eql(0);
+        });
     });
 });
