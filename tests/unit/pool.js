@@ -255,7 +255,25 @@ describe('PromisePool', function(){
     });
 
     describe('#waitingClientLength', function(){
-        it('should report the number of clients waiting for resources');
+        it('should report the number of clients waiting for resources', function(){
+            pool.waitingClientLength.should.eql(0);
+            smallPool.waitingClientLength.should.eql(0);
+
+            var prom = null;
+            return smallPool.acquire(function(client){
+                smallPool.waitingClientLength.should.eql(0);
+
+                prom = smallPool.acquire(function(client){
+                    smallPool.waitingClientLength.should.eql(0);
+                    return Promise.resolve();
+                });
+
+                smallPool.waitingClientLength.should.eql(1);
+                return Promise.resolve();
+            }).then(function(){ return prom; }).then(function(){
+                smallPool.waitingClientLength.should.eql(0);
+            });
+        });
     });
 
     describe('#max', function(){
