@@ -206,7 +206,7 @@ describe('PromisePool', function(){
             return pool.acquire(function(conn){
                 return Promise.resolve();
             }).then(function(){
-                return pool.destroyAllNow();
+                return pool.drain();
             }).then(function(){
                 created.should.eql(destroyed);
             });
