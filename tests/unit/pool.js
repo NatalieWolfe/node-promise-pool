@@ -193,7 +193,25 @@ describe('PromisePool', function(){
     });
 
     describe('#drain', function(){
-        it('should destroy all resources');
+        it('should destroy all resources', function(){
+            var created = 0;
+            var destroyed = 0;
+            var pool = new PromisePool({
+                max: 10,
+                min: 0,
+                create: function(){ ++created; return {}; },
+                destroy: function(obj){ ++destroyed; }
+            });
+
+            return pool.acquire(function(conn){
+                return Promise.resolve();
+            }).then(function(){
+                return pool.destroyAllNow();
+            }).then(function(){
+                created.should.eql(destroyed);
+            });
+        });
+
         it('should supply all waiting clients first');
         it('should wait for all resources to be returned');
     });
@@ -215,8 +233,8 @@ describe('PromisePool', function(){
             func.should.be.a.function;
             should.not.exist(conn);
 
-            return func('foo', 'bar').then(function(res){
-                res.should.eql('foobar');
+            return func('foo', 'bar').then(function(foobar){
+                foobar.should.eql('foobar');
                 should.exist(conn);
             });
         });
@@ -233,7 +251,7 @@ describe('PromisePool', function(){
                 })
             };
 
-            return obj.func('foo', 'bar').then(function(){
+            return obj.func().then(function(){
                 should.exist(conn);
             });
         });
