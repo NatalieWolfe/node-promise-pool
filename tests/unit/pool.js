@@ -26,6 +26,7 @@ describe('PromisePool', function(){
             name: 'small-pool',
             max: 1,
             min: 0,
+            drainCheckIntervalMillis: 10,
             create: function(){ return {}; },
             destroy: function(obj){}
         });
@@ -212,7 +213,26 @@ describe('PromisePool', function(){
             });
         });
 
-        it('should supply all waiting clients first');
+        it('should supply all waiting clients first', function(){
+            var promises = [];
+            var connsAcquired = 0;
+
+            for (var i = 0; i < 10; ++i) {
+                promises.push(
+                    smallPool.acquire(function(conn){
+                        ++connsAcquired;
+                        return Promise.resolve();
+                    })
+                );
+            }
+
+            return smallPool.drain()
+                .then(function(){
+                    connsAcquired.should.eql(promises.length);
+
+                    return Promise.all(promises);
+                });
+        });
         it('should wait for all resources to be returned');
     });
 
