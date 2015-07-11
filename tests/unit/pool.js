@@ -233,7 +233,23 @@ describe('PromisePool', function(){
                     return Promise.all(promises);
                 });
         });
-        it('should wait for all resources to be returned');
+
+        it('should wait for all resources to be returned', function(){
+            var timeoutRun = false;
+            var acquirePromise = smallPool.acquire(function(conn){
+                return new Promise(function(res){
+                    setTimeout(res, 30);
+                });
+            });
+
+            timeoutRun.should.be.false;
+            return smallPool.drain()
+                .then(function(){
+                    timeoutRun.should.be.true;
+
+                    return acquirePromise;
+                });
+        });
     });
 
     describe('#destroyAllNow', function(){
