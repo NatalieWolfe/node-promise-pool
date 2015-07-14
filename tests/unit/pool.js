@@ -238,7 +238,10 @@ describe('PromisePool', function(){
             var timeoutRun = false;
             var acquirePromise = smallPool.acquire(function(conn){
                 return new Promise(function(res){
-                    setTimeout(res, 30);
+                    setTimeout(function(){
+                        should.not.exist(conn.__promisePool_destroyed);
+                        res();
+                    }, 30);
                 });
             });
 
