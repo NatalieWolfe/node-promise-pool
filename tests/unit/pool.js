@@ -9,6 +9,10 @@ catch (err) {
     var PromisePool = require('../../lib/PromisePool');
 }
 
+function promTimeout(delay){
+    return new Promise(function(resolve){ return setTimeout(resolve, delay); });
+}
+
 describe('PromisePool', function(){
     var pool = null;
     var smallPool = null;
@@ -74,12 +78,15 @@ describe('PromisePool', function(){
                 destroy: function(){ ++destroyed; }
             });
 
-            return Promise.all((new Array(5)).map(function(){
-                return promise.acquire(function(conn){ return Promise.resolve(); });
-            })).then(function(){
-                return new Promise(function(resolve){ setTimeout(resolve, 20); });
+            var promises = [];
+            for (var i = 0; i < 5; ++i) {
+                promises.push(idlePool.acquire(function(conn){ return promTimeout(5); }));
+            }
+
+            return Promise.all(promises).then(function(){
+                return promTimeout(20);
             }).then(function(){
-                created.should.eql(destroyed);
+                created.should.eql(5).and.eql(destroyed);
             });
         });
     });
@@ -121,9 +128,7 @@ describe('PromisePool', function(){
                     return Promise.resolve();
                 });
 
-                return new Promise(function(res){
-                    setTimeout(res, 10);
-                }).then(function(){
+                return promTimeout(10).then(function(){
                     should.not.exist(conn2);
                 });
             }).then(function(){ return prom; }).then(function(){
@@ -261,11 +266,8 @@ describe('PromisePool', function(){
         it('should wait for all resources to be returned', function(){
             var timeoutRun = false;
             var acquirePromise = smallPool.acquire(function(conn){
-                return new Promise(function(res){
-                    setTimeout(function(){
-                        should.not.exist(conn.__promisePool_destroyed);
-                        res();
-                    }, 30);
+                return promTimeout(30).then(function(){
+                    should.not.exist(conn.__promisePool_destroyed);
                 });
             });
 
@@ -290,16 +292,17 @@ describe('PromisePool', function(){
                 destroy: function(obj){ ++destroyed; }
             });
 
-            return Promise.all((new Array(5)).map(function(){
-                return pool.acquire(function(conn){ return Promise.resolve(); });
-            })).then(function(){
-                return pool.acquire(function(conn){
-                    return pool.destroyAllNow();
-                });
+            var promises = [];
+            for (var i = 0; i < 5; ++i) {
+                promises.push(pool.acquire(function(conn){ return promTimeout(5); }));
+            }
+
+            return Promise.all(promises).then(function(){
+                return pool.acquire(function(conn){ return pool.destroyAllNow(); });
             }).then(function(){
                 // The connection that was acquired during the destruction shouldn't have been
                 // destroyed, thus the `+1`.
-                created.should.eql(destroyed + 1);
+                created.should.eql(5).and.eql(destroyed + 1);
             });
         });
     });
