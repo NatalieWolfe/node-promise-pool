@@ -175,6 +175,30 @@ describe('PromisePool', function(){
                 err.should.eql('Oh NO!');
             });
         });
+
+        it('should reject when creating a connection fails', function(){
+            var pool = new PromisePool({
+                create: function(){ return new Promise(function(res, rej){ rej('No good!'); }); },
+                destroy: function(){}
+            });
+
+            var acquired = false;
+            var resolved = false;
+            var rejected = true;
+            return pool.acquire(function(_conn){
+                acquired = true;
+                return Promise.resolve();
+            }).then(function(){
+                resolved = true;
+            }, function(err){
+                rejected = true;
+                err.should.eql('No good!');
+            }).then(function(){
+                acquired.should.be.false;
+                resolved.should.be.false;
+                rejected.should.be.true;
+            });
+        });
     });
 
     describe('#release', function(){
@@ -266,7 +290,7 @@ describe('PromisePool', function(){
         it('should wait for all resources to be returned', function(){
             var timeoutRun = false;
             var acquirePromise = smallPool.acquire(function(conn){
-                return promTimeout(30).then(function(){
+                return promTimeout(20).then(function(){
                     should.not.exist(conn.__promisePool_destroyed);
                 });
             });
