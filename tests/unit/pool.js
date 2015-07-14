@@ -256,7 +256,28 @@ describe('PromisePool', function(){
     });
 
     describe('#destroyAllNow', function(){
-        it('should destroy all available resources');
+        it('should destroy all available resources', function(){
+            var created = 0;
+            var destroyed = 0;
+            var pool = new PromisePool({
+                max: 10,
+                min: 0,
+                create: function(){ ++created; return {}; },
+                destroy: function(obj){ ++destroyed; }
+            });
+
+            return Promise.all((new Array(5)).map(function(){
+                return pool.acquire(function(conn){ return Promise.resolve(); });
+            })).then(function(){
+                return pool.acquire(function(conn){
+                    return pool.destroyAllNow();
+                });
+            }).then(function(){
+                // The connection that was acquired during the destruction shouldn't have been
+                // destroyed, thus the `+1`.
+                created.should.eql(destroyed + 1);
+            });
+        });
     });
 
     describe('#pooled', function(){
