@@ -60,6 +60,30 @@ describe('PromisePool', function(){
         });
     });
 
+    describe('idle connections', function(){
+        it('should be reaped when idle for too long', function(){
+            var created = 0;
+            var destroyed = 0;
+            var idlePool = new PromisePool({
+                name: 'idle-pool',
+                max: 10,
+                min: 0,
+                idleTimeoutMillis: 10,
+                reapIntervalMillis: 5,
+                create: function(){ ++created; return {}; },
+                destroy: function(){ ++destroyed; }
+            });
+
+            return Promise.all((new Array(5)).map(function(){
+                return promise.acquire(function(conn){ return Promise.resolve(); });
+            })).then(function(){
+                return new Promise(function(resolve){ setTimeout(resolve, 20); });
+            }).then(function(){
+                created.should.eql(destroyed);
+            });
+        });
+    });
+
     describe('#acquire', function(){
         it('should get a connection', function(){
             return pool.acquire(function(conn){
