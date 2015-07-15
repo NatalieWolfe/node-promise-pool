@@ -1,5 +1,5 @@
 # Promise Pool [![Build Status][1]][2] [![Coverage Status][3]][4]
-Promise-based connection pooling library based on generic-pool.
+Promise-based connection pooling library inspired by generic-pool.
 
 ## Installation
 ```sh
@@ -17,7 +17,7 @@ var pool = require('generic-promise-pool');
 var mysqlPool = pool.create({
     name    : 'mysql',  // An optional name for the pool.
     max     : 10,       // Optional limit for how many connections to allow.
-    min     : 2,        // Optional minimum number of connections to keep in the pool.
+    min     : 2,        // Optional minimum connections to keep in the pool.
     create  : function(){
         var conn = mysql.createConnection(mysqlConnOptions);
         return conn.connect();
@@ -35,13 +35,13 @@ http://NatalieWolfe.github.io/node-promise-pool/docs/PromisePool.Factory.html
 In this example we get a connection from the pool and use it to make a query.
 ```js
 mysqlPool.acquire(function(conn){
-    // The connection remains acquired until the promise returned by this function is resolved or
-    // rejected.
-    return conn.query('SELECT * FROM `books` WHERE `author` = "Neal Stephenson"');
+    // The connection remains acquired until the promise returned by this
+    // function is resolved or rejected.
+    return conn.query('SELECT * FROM books WHERE author = "Neal Stephenson"');
 }).then(function(res){
-    // The connection has been released back to the pool before we get here, and the results from
-    // the acquire callback is propagated out.
-    res.forEach(console.log.bind(console));
+    // The connection has been released back to the pool before we get here,
+    // and the results from the acquire callback is propagated out.
+    res.forEach(function(row){ console.dir(row); });
 }, function(err){
     console.error(err);
 });
