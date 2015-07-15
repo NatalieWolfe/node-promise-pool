@@ -1,5 +1,5 @@
 # Promise Pool [![Build Status][1]][2] [![Coverage Status][3]][4]
-Promise-based connection pooling library built on generic-pool.
+Promise-based connection pooling library based on generic-pool.
 
 ## Installation
 ```sh
