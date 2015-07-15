@@ -28,6 +28,9 @@ var mysqlPool = pool.create({
 });
 ```
 
+For a full list of options that the `PromisePool` accepts, see the documentation on GitHub:
+http://NatalieWolfe.github.io/node-promise-pool/docs/PromisePool.Factory.html
+
 ### Using the Pool
 In this example we get a connection from the pool and use it to make a query.
 ```js
