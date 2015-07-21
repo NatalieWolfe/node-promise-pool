@@ -1,6 +1,6 @@
 {
   "name": "generic-promise-pool",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Promise-based connection pooling library built on generic-pool.",
   "main": "index.js",
   "scripts": {

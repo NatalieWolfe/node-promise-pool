@@ -1,4 +1,7 @@
 
+## v1.0.4 - 2015-07-21
+ - Cleaned up documentation.
+
 ## v1.0.3 - 2015-07-14
  - Expanded test coverage to 97%.
 
