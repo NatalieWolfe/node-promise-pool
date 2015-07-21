@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: PromisePool.js</title>
+    <title>JSDoc: Source: lib/PromisePool.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: PromisePool.js</h1>
+    <h1 class="page-title">Source: lib/PromisePool.js</h1>
 
     
 
@@ -33,8 +33,8 @@ var PriorityQueue = require('./PriorityQueue');
 
 /**
  * Constructs a new pool with the provided factory options.
- * @constructor
  *
+ * @constructor
  * @classdesc
  * A resource pooling class with a promise-based API.
  *
@@ -87,12 +87,6 @@ function PromisePool(opts) {
 }
 
 // ---------------------------------------------------------------------------------------------- //
-
-/**
- * @type {PromisePool.Client}
- *
- * Whatever client time the pool is, uh, pooling.
- */
 
 /**
  * @callback PromisePool.AcquireCallback
@@ -208,6 +202,7 @@ function PromisePool(opts) {
  * Default logging method, just logs to `console.log`.
  *
  * @private
+ * @memberof PromisePool
  *
  * @param {string}
  */
@@ -219,7 +214,7 @@ function _logger(str, level) {
  * Constructs more resources to bring the current count up to the minimum specified in the factory.
  *
  * @private
- * @this PromisePool
+ * @memberof PromisePool
  *
  * @return {Promise} A promise to create all the resources needed.
  */
@@ -242,7 +237,7 @@ function _ensureMinimum() {
  * Constructs a new resource.
  *
  * @private
- * @this PromisePool
+ * @memberof PromisePool
  */
 function _createResource() {
     this._log(
@@ -260,7 +255,7 @@ function _createResource() {
  * Checks and removes the available (idle) clients that have timed out.
  *
  * @private
- * @this PromisePool
+ * @memberof PromisePool
  */
 function _removeIdle() {
     var removals = [];
@@ -307,7 +302,7 @@ function _removeIdle() {
  * Only one removal at a time can be scheduled.
  *
  * @private
- * @this PromisePool
+ * @memberof PromisePool
  */
 function _scheduleRemoveIdle(){
     if (!this._removeIdleScheduled) {
@@ -320,7 +315,7 @@ function _scheduleRemoveIdle(){
  * Try to get a new client to work, and clean up pool unused (idle) items.
  *
  * @private
- * @this PromisePool
+ * @memberof PromisePool
  *
  *  - If there are available clients waiting, shift the first one out (LIFO), and call its callback.
  *  - If there are no waiting clients, try to create one if it won't exceed the maximum number of
@@ -367,6 +362,7 @@ function _dispense() {
  * Creates a filter usable for finding a client in the available clients list.
  *
  * @private
+ * @memberof PromisePool
  *
  * @param {PromisePool.Client} obj
  *  The client to filter the list for.
@@ -584,8 +580,10 @@ PromisePool.prototype.pooled = function(decorated, priority){
 };
 
 /**
+ * The total number of resources in the pool.
+ *
  * @readonly
- * @member {number} PromisePool.prototype.length - The total number of resources in the pool.
+ * @member {number} PromisePool.prototype.length
  */
 Object.defineProperty(PromisePool.prototype, 'length', {
     get: function(){ return this._count; },
@@ -593,8 +591,10 @@ Object.defineProperty(PromisePool.prototype, 'length', {
 });
 
 /**
+ * The name of the pool, as provided in the factory.
+ *
  * @readonly
- * @member {string} PromisePool.prototype.name - The name of the pool, as provided in the factory.
+ * @member {string} PromisePool.prototype.name
  */
 Object.defineProperty(PromisePool.prototype, 'name', {
     get: function(){ return this._opts.name; },
@@ -602,9 +602,10 @@ Object.defineProperty(PromisePool.prototype, 'name', {
 });
 
 /**
+ * The number of available (e.g. idle) resources in the pool.
+ *
  * @readonly
  * @member {number} PromisePool.prototype.availableLength
- *  The number of available (e.g. idle) resources in the pool.
  */
 Object.defineProperty(PromisePool.prototype, 'availableLength', {
     get: function(){ return this._availableObjects.length; },
@@ -612,9 +613,10 @@ Object.defineProperty(PromisePool.prototype, 'availableLength', {
 });
 
 /**
+ * The number of clients currently waiting for a resource to become available/be created.
+ *
  * @readonly
  * @member {number} PromisePool.prototype.waitingClientLength
- *  The number of clients currently waiting for a resource to become available/be created.
  */
 Object.defineProperty(PromisePool.prototype, 'waitingClientLength', {
     get: function(){ return this._waitingClients.length; },
@@ -622,9 +624,10 @@ Object.defineProperty(PromisePool.prototype, 'waitingClientLength', {
 });
 
 /**
+ * The maximum number of resources this pool will create.
+ *
  * @readonly
  * @member {number} PromisePool.prototype.max
- *  The maximum number of resources this pool will create.
  */
 Object.defineProperty(PromisePool.prototype, 'max', {
     get: function(){ return this._opts.max; },
@@ -632,9 +635,10 @@ Object.defineProperty(PromisePool.prototype, 'max', {
 });
 
 /**
+ * The minimum number of resources the pool will keep at any given time.
+ *
  * @readonly
  * @member {number} PromisePool.prototype.min
- *  The minimum number of resources the pool will keep at any given time.
  */
 Object.defineProperty(PromisePool.prototype, 'min', {
     get: function(){ return this._opts.min; },
@@ -652,13 +656,13 @@ module.exports = PromisePool;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PromisePool.html">PromisePool</a></li></ul><h3>Namespaces</h3><ul><li><a href="PromisePool.Factory.html">Factory</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PromisePool.html">PromisePool</a></li></ul><h3>Namespaces</h3><ul><li><a href="exports.html">exports</a></li><li><a href="PromisePool.Factory.html">Factory</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Jul 14 2015 15:58:24 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Jul 21 2015 14:18:50 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
