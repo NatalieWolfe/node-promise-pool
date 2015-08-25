@@ -1,4 +1,7 @@
 
+## v1.1.0 - 2015-08-25
+ - Added `onRelease` hook to allow delaying putting clients back in the pool.
+
 ## v1.0.4 - 2015-07-21
  - Cleaned up documentation.
 
