@@ -1,7 +1,7 @@
 {
   "name": "generic-promise-pool",
-  "version": "1.0.3",
-  "description": "Promise-based connection pooling library built on generic-pool.",
+  "version": "1.1.0",
+  "description": "Promise-based connection pooling library inspired by generic-pool.",
   "main": "index.js",
   "scripts": {
     "docs": "./node_modules/.bin/jsdoc2md lib/*.js > docs.md",
