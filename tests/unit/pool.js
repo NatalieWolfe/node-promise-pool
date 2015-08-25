@@ -244,6 +244,50 @@ describe('PromisePool', function(){
                 });
             });
         });
+
+        it('should check the `onRelease` hook if provided', function(){
+            var conn = null;
+            var releasedConn = null;
+            var counter = 0;
+            var onReleasePool = new PromisePool({
+                max: 1,
+                min: 0,
+                create: function(){ return {}; },
+                destroy: function(_conn){},
+                onRelease: function(_conn){ ++counter; releasedConn = _conn; }
+            });
+
+            return onReleasePool.acquire(function(_conn){
+                conn = _conn;
+                return Promise.resolve();
+            }).then(function(){
+                should.exist(conn);
+                conn.should.equal(releasedConn);
+                counter.should.eql(1);
+            });
+        });
+
+        it('should not return a client to the pool if `onRelease` fails', function(){
+            var conn = null;
+            var destroyedConn = null;
+            var counter = 0;
+            var onReleasePool = new PromisePool({
+                max: 1,
+                min: 0,
+                create: function(){ return {}; },
+                destroy: function(_conn){ destroyedConn = _conn; ++counter; },
+                onRelease: function(_conn){ return Promise.reject(new Error('foobar')); }
+            });
+
+            return onReleasePool.acquire(function(_conn){
+                conn = _conn;
+                return Promise.resolve();
+            }).then(function(){
+                should.exist(conn);
+                conn.should.equal(destroyedConn);
+                counter.should.eql(1);
+            });
+        });
     });
 
     describe('#drain', function(){
