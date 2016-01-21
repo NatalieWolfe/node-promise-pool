@@ -4,7 +4,12 @@
   "description": "Promise-based connection pooling library inspired by generic-pool.",
   "main": "index.js",
   "scripts": {
-    "docs": "./node_modules/.bin/jsdoc2md lib/*.js > docs.md",
+    "docs": "npm run docs-full && npm run docs-readme",
+    "docs-full": "jsdoc2md lib/*.js > docs.md",
+    "docs-readme": "jsdoc2md --template readme-template.md.hbs lib/*.js > README.md",
+    "gh-pages": "jsdoc -c jsdoc-conf.json -P ./package.json -R ./README.md -r .",
+    "postpublish": "rm docs.md",
+    "prepublish": "npm run docs",
     "test": "./node_modules/.bin/mocha --recursive tests/unit"
   },
   "repository": {
@@ -17,7 +22,11 @@
     "pooling",
     "generic-pool",
     "connection",
-    "connection pooling"
+    "connection pool",
+    "connection pooling",
+    "client",
+    "client pool",
+    "client pooling"
   ],
   "author": "Natalie Wolfe <natalie@lifewanted.com>",
   "license": "MIT",
@@ -30,10 +39,10 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
-    "jscoverage": "^0.5.9",
+    "jscoverage": "^0.6.0",
     "jsdoc-to-markdown": "^1.1.1",
     "mocha": "^2.2.5",
-    "mocha-lcov-reporter": "0.0.2",
-    "should": "^7.0.1"
+    "mocha-lcov-reporter": "1.0.0",
+    "should": "^8.1.1"
   }
 }
