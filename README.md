@@ -8,8 +8,8 @@ $ npm install generic-promise-pool
 
 ## Documentation
 The full generated [JSDoc](http://usejsdoc.org/) documentation is hosted on GitHub here:
-https://NatalieWolfe.github.io/node-promise-pool/docs/. Below are the options that can be used to
-create pools.
+https://NatalieWolfe.github.io/node-promise-pool/docs/. You can also find the documentation as a
+single markdown file at `docs.md` Below are the options used for configuring a pool.
 
 ### Pool Factory Options
 **Properties**
