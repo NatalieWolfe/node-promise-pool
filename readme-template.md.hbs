@@ -9,13 +9,8 @@ $ npm install generic-promise-pool
 ## Documentation
 The full generated [JSDoc](http://usejsdoc.org/) documentation is hosted on GitHub here:
 https://NatalieWolfe.github.io/node-promise-pool/docs/. You can also find the documentation as a
-single markdown file at `docs.md` Below are the options used for configuring a pool.
-
-### Pool Factory Options
-{{#namespace name="Factory"}}
-{{>properties~}}
-{{>members~}}
-{{/namespace}}
+single markdown file at `docs.md`. All of the [options used for configuring](#pool-factory-options)
+a pool are at the end of this README.
 
 ## Examples
 
@@ -67,6 +62,12 @@ mysqlPool.drain()
         console.log('The pool has drained, and all connections destroyed.');
     });
 ```
+
+## Pool Factory Options
+{{#namespace name="Factory"}}
+{{>properties~}}
+{{>members~}}
+{{/namespace}}
 
 [1]: https://travis-ci.org/NatalieWolfe/node-promise-pool.svg?branch=master
 [2]: https://travis-ci.org/NatalieWolfe/node-promise-pool

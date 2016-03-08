@@ -9,9 +9,61 @@ $ npm install generic-promise-pool
 ## Documentation
 The full generated [JSDoc](http://usejsdoc.org/) documentation is hosted on GitHub here:
 https://NatalieWolfe.github.io/node-promise-pool/docs/. You can also find the documentation as a
-single markdown file at `docs.md` Below are the options used for configuring a pool.
+single markdown file at `docs.md`. All of the [options used for configuring](#pool-factory-options)
+a pool are at the end of this README.
 
-### Pool Factory Options
+## Examples
+
+### Creating a Pool
+This example creates a pool that uses a hypothetical promise-based MySQL library.
+```js
+var mysql = require('promise-mysql');
+var pool = require('generic-promise-pool');
+
+var mysqlPool = pool.create({
+    name    : 'mysql',  // An optional name for the pool.
+    max     : 10,       // Optional limit for how many connections to allow.
+    min     : 2,        // Optional minimum connections to keep in the pool.
+    create  : function(){
+        var conn = mysql.createConnection(mysqlConnOptions);
+        return conn.connect();
+    },
+    destroy : function(conn){
+        return conn.end();
+    }
+});
+```
+
+For a full list of options that the `PromisePool` accepts, see the documentation on GitHub:
+https://NatalieWolfe.github.io/node-promise-pool/docs/PromisePool.Factory.html
+
+### Using the Pool
+In this example we get a connection from the pool and use it to make a query.
+```js
+mysqlPool.acquire(function(conn){
+    // The connection remains acquired until the promise returned by this
+    // function is resolved or rejected.
+    return conn.query('SELECT * FROM books WHERE author = "Neal Stephenson"');
+}).then(function(res){
+    // The connection has been released back to the pool before we get here,
+    // and the results from the acquire callback is propagated out.
+    res.forEach(function(row){ console.dir(row); });
+}, function(err){
+    console.error(err);
+});
+```
+
+### Draining the Pool
+When you want to shut down your application, it can be quite annoying to wait for idle connections
+to close naturally. To get past this, drain the pool before shutting down.
+```js
+mysqlPool.drain()
+    .then(function(){
+        console.log('The pool has drained, and all connections destroyed.');
+    });
+```
+
+## Pool Factory Options
 **Properties**
 
 | Name | Type | Description |
@@ -73,57 +125,6 @@ single markdown file at `docs.md` Below are the options used for configuring a p
 | msg | <code>string</code> | The message to be logged. |
 | level | <code>string</code> | The importance of this log message. Possible values are: `verbose`, `info`, and `error`. |
 
-
-## Examples
-
-### Creating a Pool
-This example creates a pool that uses a hypothetical promise-based MySQL library.
-```js
-var mysql = require('promise-mysql');
-var pool = require('generic-promise-pool');
-
-var mysqlPool = pool.create({
-    name    : 'mysql',  // An optional name for the pool.
-    max     : 10,       // Optional limit for how many connections to allow.
-    min     : 2,        // Optional minimum connections to keep in the pool.
-    create  : function(){
-        var conn = mysql.createConnection(mysqlConnOptions);
-        return conn.connect();
-    },
-    destroy : function(conn){
-        return conn.end();
-    }
-});
-```
-
-For a full list of options that the `PromisePool` accepts, see the documentation on GitHub:
-https://NatalieWolfe.github.io/node-promise-pool/docs/PromisePool.Factory.html
-
-### Using the Pool
-In this example we get a connection from the pool and use it to make a query.
-```js
-mysqlPool.acquire(function(conn){
-    // The connection remains acquired until the promise returned by this
-    // function is resolved or rejected.
-    return conn.query('SELECT * FROM books WHERE author = "Neal Stephenson"');
-}).then(function(res){
-    // The connection has been released back to the pool before we get here,
-    // and the results from the acquire callback is propagated out.
-    res.forEach(function(row){ console.dir(row); });
-}, function(err){
-    console.error(err);
-});
-```
-
-### Draining the Pool
-When you want to shut down your application, it can be quite annoying to wait for idle connections
-to close naturally. To get past this, drain the pool before shutting down.
-```js
-mysqlPool.drain()
-    .then(function(){
-        console.log('The pool has drained, and all connections destroyed.');
-    });
-```
 
 [1]: https://travis-ci.org/NatalieWolfe/node-promise-pool.svg?branch=master
 [2]: https://travis-ci.org/NatalieWolfe/node-promise-pool
