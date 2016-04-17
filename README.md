@@ -84,10 +84,12 @@ mysqlPool.drain()
 | returnToHead | <code>bool</code> | Optional. Returns released object to the head of the available objects list. Default is false. |
 
 <a name="PromisePool.Factory.create"></a>
+
 ### Factory.create ⇒ <code>Promise.&lt;PromisePool.Client&gt;</code>
 **Kind**: static typedef of <code>[Factory](#PromisePool.Factory)</code>  
 **Returns**: <code>Promise.&lt;PromisePool.Client&gt;</code> - A promise for a new client.  
 <a name="PromisePool.Factory.destroy"></a>
+
 ### Factory.destroy ⇒ <code>Promise</code>
 **Kind**: static typedef of <code>[Factory](#PromisePool.Factory)</code>  
 **Returns**: <code>Promise</code> - If destruction is asynchronous, a promise should be returned that will resolve
@@ -98,6 +100,7 @@ mysqlPool.drain()
 | client | <code>PromisePool.Client</code> | A resource that had been created earlier. |
 
 <a name="PromisePool.Factory.validate"></a>
+
 ### Factory.validate ⇒ <code>bool</code>
 **Kind**: static typedef of <code>[Factory](#PromisePool.Factory)</code>  
 **Returns**: <code>bool</code> - True if the resource is still valid, otherwise false should be returned.  
@@ -107,6 +110,7 @@ mysqlPool.drain()
 | client | <code>PromisePool.Client</code> | A resource that had been created earlier. |
 
 <a name="PromisePool.Factory.onRelease"></a>
+
 ### Factory.onRelease ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: static typedef of <code>[Factory](#PromisePool.Factory)</code>  
 **Returns**: <code>Promise.&lt;\*&gt;</code> - May return a promise, in which case the client wont join the pool until
@@ -117,6 +121,7 @@ mysqlPool.drain()
 | client | <code>PromisePool.Client</code> | A resource that has been released back to the pool. |
 
 <a name="PromisePool.Factory.log"></a>
+
 ### Factory.log : <code>function</code>
 **Kind**: static typedef of <code>[Factory](#PromisePool.Factory)</code>  
 

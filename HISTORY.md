@@ -1,4 +1,7 @@
 
+## v1.2.0 - 2016-04-17
+ - Added support for adjusting the pool minimum and maximum after creation.
+
 ## v1.1.1 - 2016-03-08
  - Improved documentation in `README.md`.
 
