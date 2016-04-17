@@ -509,6 +509,27 @@ describe('PromisePool', function(){
             pool.min.should.eql(10);
             smallPool.min.should.eql(0);
         });
+
+        it('should change the minimum number of resources when set', function(){
+            pool.min.should.eql(10);
+            pool.min = 20;
+            pool.min.should.eql(20);
+            return promTimeout(25).then(function(){
+                pool.length.should.eql(pool.min);
+            })
+        });
+
+        it('should not set the minimum to above the maximum', function(){
+            pool.min.should.eql(10);
+            pool.min = 1000;
+            pool.min.should.eql(pool.max);
+        });
+
+        it('should refuse to set max to non-numeric values', function(){
+            (function(){
+                pool.min = 'foobar';
+            }).should.throw('Pool `min` must be an integer.');
+        });
     });
 });
 
