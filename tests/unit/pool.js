@@ -18,11 +18,12 @@ describe('PromisePool', function(){
     var smallPool = null;
 
     beforeEach(function(){
+        var id = 0
         pool = new PromisePool({
             name: 'test-pool',
             max: 100,
             min: 10,
-            create: function(){ return {}; },
+            create: function(){ return {id: ++id}; },
             destroy: function(obj){}
         });
 
@@ -31,7 +32,7 @@ describe('PromisePool', function(){
             max: 1,
             min: 0,
             drainCheckIntervalMillis: 10,
-            create: function(){ return {}; },
+            create: function(){ return {id: ++id}; },
             destroy: function(obj){}
         });
     });
@@ -110,19 +111,13 @@ describe('PromisePool', function(){
         });
 
         it('should queue requests when out of connections', function(){
-            var pool2 = new PromisePool({
-                max: 1,
-                create: function(){ return {}; },
-                destroy: function(){}
-            });
-
             var conn = null;
             var conn2 = null;
             var prom = null;
-            return pool2.acquire(function(_conn){
+            return smallPool.acquire(function(_conn){
                 conn = _conn;
 
-                prom = pool2.acquire(function(_conn2){
+                prom = smallPool.acquire(function(_conn2){
                     conn2 = _conn2;
                     conn.should.equal(conn2);
                     return Promise.resolve();
@@ -171,7 +166,9 @@ describe('PromisePool', function(){
         it('should handle errors thrown in callback', function(){
             return pool.acquire(function(conn){
                 throw 'Oh NO!';
-            }).catch(function(err){
+            }).then(function(){
+                true.should.be.false;
+            }, function(err){
                 err.should.eql('Oh NO!');
             });
         });
@@ -486,6 +483,25 @@ describe('PromisePool', function(){
             pool.max.should.eql(100);
             smallPool.max.should.eql(1);
         });
+
+        it('should change the maximum number of resources when set', function(){
+            smallPool.max.should.eql(1);
+            smallPool.max = 10;
+            smallPool.max.should.eql(10);
+            return testPoolMax(smallPool);
+        });
+
+        it('should not set the maximum to below the minimum', function(){
+            pool.max.should.eql(100);
+            pool.max = 1;
+            pool.max.should.eql(pool.min);
+        });
+
+        it('should refuse to set max to non-numeric values', function(){
+            (function(){
+                pool.max = 'foobar';
+            }).should.throw('Pool `max` must be an integer.');
+        });
     });
 
     describe('#min', function(){
@@ -493,5 +509,77 @@ describe('PromisePool', function(){
             pool.min.should.eql(10);
             smallPool.min.should.eql(0);
         });
+
+        it('should change the minimum number of resources when set', function(){
+            pool.min.should.eql(10);
+            pool.min = 20;
+            pool.min.should.eql(20);
+            return promTimeout(25).then(function(){
+                pool.length.should.eql(pool.min);
+            })
+        });
+
+        it('should not set the minimum to above the maximum', function(){
+            pool.min.should.eql(10);
+            pool.min = 1000;
+            pool.min.should.eql(pool.max);
+        });
+
+        it('should refuse to set max to non-numeric values', function(){
+            (function(){
+                pool.min = 'foobar';
+            }).should.throw('Pool `min` must be an integer.');
+        });
     });
 });
+
+/**
+ * Tests the enforcement of the pool's maximum size.
+ *
+ * @param {PromisePool} pool - The pool to test.
+ *
+ * @return {Promise} A promise to fully test the pool's enforcement of `max`.
+ */
+function testPoolMax(pool){
+    const RELEASE_DELAY = 25;
+    const MAX = pool.max;
+
+    var ids = [];
+    var objs = {};
+    var acquisitions = [];
+
+    // Acquire the maximum number of resources.
+    var start = Date.now();
+    for (var i = 0; i < MAX; ++i) {
+        acquisitions.push(pool.acquire(function(obj){
+            // This acquisition should not be delayed by earlier ones.
+            var acquiredTime = Date.now();
+            (acquiredTime - start).should.be.lessThan(RELEASE_DELAY);
+
+            // This object should not have been previously acquired.
+            objs.should.not.have.property(obj.id);
+            objs[obj.id] = true;
+
+            // Delay releasing the object.
+            return promTimeout(RELEASE_DELAY);
+        }));
+    }
+
+    // Our next acquisition should be delayed by the earlier ones.
+    var delayedAcquireStart = Date.now();
+    acquisitions.push(pool.acquire(function(obj){
+        // This acquire should have been delayed.
+        var acquiredTime = Date.now();
+        (acquiredTime - delayedAcquireStart).should.be.within(RELEASE_DELAY, RELEASE_DELAY * 2);
+
+        // This resource should have been previously acquired.
+        objs.should.have.property(obj.id);
+
+        return Promise.resolve();
+    }));
+
+    return Promise.all(acquisitions).then(function(){
+        // The pool should be at maximum allocation now.
+        pool.length.should.eql(MAX);
+    });
+}
