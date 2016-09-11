@@ -8,9 +8,11 @@
     "docs-full": "jsdoc2md lib/*.js > docs.md",
     "docs-readme": "jsdoc2md --template readme-template.md.hbs lib/*.js > README.md",
     "gh-pages": "jsdoc -c jsdoc-conf.json -P ./package.json -R ./README.md -r .",
+    "lint": "eslint *.js lib tests",
     "postpublish": "rm docs.md",
     "prepublish": "npm run docs",
-    "test": "./node_modules/.bin/mocha --recursive tests/unit"
+    "test": "npm run unit",
+    "unit": "mocha --recursive tests/unit"
   },
   "repository": {
     "type": "git",
@@ -39,10 +41,11 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
+    "eslint": "^3.5.0",
     "jscoverage": "^0.6.0",
     "jsdoc-to-markdown": "^1.1.1",
-    "mocha": "^2.2.5",
+    "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.0.0",
-    "should": "^8.1.1"
+    "should": "^11.1.0"
   }
 }
