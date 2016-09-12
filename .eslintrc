@@ -1,5 +1,6 @@
 {
     "rules": {
-        "semi": ["warn", "always"]
+        "semi": ["warn", "always"],
+        "strict": ["error", "global"]
     }
 }
