@@ -1,3 +1,4 @@
+'use strict';
 
 /**
  * The items exported by the `generic-promise-pool` package.

@@ -1,4 +1,4 @@
-
+'use strict';
 
 var should = require('should');
 
@@ -201,7 +201,7 @@ describe('PromisePool', function(){
 
         it('should handle being usurped when creating connections (#5)', function(done) {
             // https://github.com/NatalieWolfe/node-promise-pool/issues/5
-            const CREATE_TIME = 30;
+            var CREATE_TIME = 30;
             var conn = null;
             var created = 0;
             var defer = {};
@@ -594,7 +594,7 @@ describe('PromisePool', function(){
             pool.min.should.eql(20);
             return promTimeout(25).then(function(){
                 pool.length.should.eql(pool.min);
-            })
+            });
         });
 
         it('should not set the minimum to above the maximum', function(){
@@ -619,10 +619,9 @@ describe('PromisePool', function(){
  * @return {Promise} A promise to fully test the pool's enforcement of `max`.
  */
 function testPoolMax(pool){
-    const RELEASE_DELAY = 25;
-    const MAX = pool.max;
+    var RELEASE_DELAY = 25;
+    var MAX = pool.max;
 
-    var ids = [];
     var objs = {};
     var acquisitions = [];
 

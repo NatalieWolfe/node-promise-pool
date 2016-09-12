@@ -1,6 +1,32 @@
 {
+    "env": {
+        "node": true
+    },
+    "globals": {
+        "Promise": true
+    },
     "rules": {
+        "curly": ["error", "all"],
+        "dot-location": ["error", "property"],
+        "no-console": "error",
+        "no-debugger": "error",
+        "no-eval": "error",
+        "no-extra-semi": "warn",
+        "no-implied-eval": "error",
+        "no-invalid-regexp": "error",
+        "no-irregular-whitespace": "error",
+        "no-new-func": "error",
+        "no-shadow": "warn",
+        "no-trailing-spaces": "error",
+        "no-undef": "error",
+        "no-undef-init": "warn",
+        "no-unused-vars": ["error", {"args": "none"}],
+        "no-use-before-define": ["error", {"functions": false}],
+        "no-useless-call": "warn",
+        "no-useless-escape": "warn",
+        "no-with": "error",
         "semi": ["warn", "always"],
-        "strict": ["error", "global"]
+        "strict": ["error", "global"],
+        "valid-jsdoc": "warn"
     }
 }
