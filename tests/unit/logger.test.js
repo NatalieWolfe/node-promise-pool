@@ -61,6 +61,16 @@ describe('logger', function() {
                 log.info('message');
                 logSpy.should.be.calledWith('pool foo - message', 'info');
             });
+
+            it('should format extra data provided', function() {
+                log.info('foo%s', 'bar');
+                logSpy.should.be.calledWith('pool foo - foobar', 'info');
+            });
+
+            it('should format extra data provided', function() {
+                log.info({extra: 'data'}, 'message');
+                logSpy.should.be.calledWith('pool foo - message ({\n  "extra": "data"\n})', 'info');
+            });
         });
     });
 });
