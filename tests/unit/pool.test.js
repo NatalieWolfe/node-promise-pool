@@ -2,12 +2,8 @@
 
 var should = require('should');
 
-try {
-    var PromisePool = require('../../lib-cov/PromisePool');
-}
-catch (err) {
-    var PromisePool = require('../../lib/PromisePool');
-}
+var testRequire = require('../lib/require');
+var PromisePool = testRequire('PromisePool');
 
 function promTimeout(delay){
     return new Promise(function(resolve){ return setTimeout(resolve, delay); });

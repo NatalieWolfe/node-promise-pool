@@ -4,7 +4,8 @@ var should = require('should');
 var sinon = require('sinon');
 require('should-sinon');
 
-var logger = require('../../lib/logger');
+var testRequire = require('../lib/require');
+var logger = testRequire('logger');
 
 describe('logger', function() {
     describe('.noop', function() {
