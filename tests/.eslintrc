@@ -1,0 +1,10 @@
+{
+    "env": {
+        "node": true,
+        "mocha": true
+    },
+    "rules": {
+        "no-shadow": "off",
+        "no-unused-vars": ["warn", {"varsIgnorePattern": "should", "args": "none"}]
+    }
+}
