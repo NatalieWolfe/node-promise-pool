@@ -1,4 +1,8 @@
 
+## v1.2.1 - 2016-09-16
+ - Fixed a bug when dispatching clients (#5).
+ - Began linting the codebase.
+
 ## v1.2.0 - 2016-04-17
  - Added support for adjusting the pool minimum and maximum after creation.
 
