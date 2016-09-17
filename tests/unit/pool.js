@@ -18,7 +18,7 @@ describe('PromisePool', function(){
     var smallPool = null;
 
     beforeEach(function(){
-        var id = 0
+        var id = 0;
         pool = new PromisePool({
             name: 'test-pool',
             max: 100,
@@ -158,7 +158,9 @@ describe('PromisePool', function(){
         it('should propagate errors of the callback', function(){
             return pool.acquire(function(conn){
                 return Promise.reject('bizbang');
-            }).catch(function(err){
+            }).then(function(){
+                true.should.be.false;
+            }, function(err){
                 err.should.eql('bizbang');
             });
         });
@@ -195,6 +197,82 @@ describe('PromisePool', function(){
                 resolved.should.be.false;
                 rejected.should.be.true;
             });
+        });
+
+        it('should handle being usurped when creating connections (#5)', function(done) {
+            // https://github.com/NatalieWolfe/node-promise-pool/issues/5
+            const CREATE_TIME = 30;
+            var conn = null;
+            var created = 0;
+            var defer = {};
+            var deferred = new Promise(function(resolve, reject) {
+                defer.resolve = resolve;
+                defer.reject = reject;
+            });
+
+            // 1) Use a pool with only a single available client.
+            var pool = new PromisePool({
+                name: 'pool',
+                max: 2,
+                min: 0,
+                drainCheckIntervalMillis: 10,
+                create: function() {
+                    return new Promise(function(resolve) {
+                        setTimeout(function() {
+                            ++created;
+                            resolve({});
+                        }, CREATE_TIME);
+                    });
+                },
+                destroy: function(obj) {}
+            });
+
+            // Watch for unhandled rejections.
+            var calledDone = false;
+            function end(err) {
+                process.removeListener('unhandledRejection', end);
+                if (!err) {
+                    pool.availableLength.should.equal(2);
+                }
+                if (!calledDone) {
+                    calledDone = true;
+                    done(err);
+                }
+            }
+            process.once('unhandledRejection', end);
+
+            // 2) Acquire the available connection.
+            pool.acquire(function(_conn) {
+                conn = _conn;
+                created.should.equal(1);
+
+                // 3) While that is acquired, acquire another, causing creation of a new connection.
+                acquireSecond();
+
+                // 4) Before new connection is established, release the first one.
+                return new Promise(function(resolve) {
+                    setTimeout(function() {
+                        resolve();
+                    }, CREATE_TIME / 2);
+                });
+            }).then(function() {
+                return deferred;
+            }).then(function() { setImmediate(end); }, end);
+
+            function acquireSecond() {
+                pool.acquire(function(_conn) {
+                    conn.should.equal(_conn);
+                    created.should.equal(1);
+
+                    // 5) Once new connection is created, pool should not error.
+                    return new Promise(function(resolve, reject) {
+                        setTimeout(function() {
+                            created.should.equal(2);
+                            resolve();
+                        }, CREATE_TIME);
+                    });
+                }).then(defer.resolve, defer.reject);
+            }
         });
     });
 
