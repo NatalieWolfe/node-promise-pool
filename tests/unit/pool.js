@@ -96,7 +96,6 @@ describe('PromisePool', function(){
         it('should get a connection', function(){
             return pool.acquire(function(conn){
                 should.exist(conn);
-
                 return Promise.resolve();
             });
         });
@@ -196,6 +195,23 @@ describe('PromisePool', function(){
                 acquired.should.be.false;
                 resolved.should.be.false;
                 rejected.should.be.true;
+            });
+        });
+
+        it('should reject in releasing errors', function(){
+            var rejected = false;
+            var oldRelease = pool.release;
+            var conn = null;
+            return pool.acquire(function(_conn){
+                conn = _conn;
+                pool.release = null; // Break the pool.
+                return Promise.resolve();
+            }).catch(function() {
+                rejected = true;
+            }).then(function() {
+                pool.release = oldRelease;
+                pool.release(conn);
+                rejected.should.be.true();
             });
         });
 
