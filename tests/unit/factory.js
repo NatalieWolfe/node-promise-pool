@@ -43,4 +43,21 @@ describe('PromisePool.Factory', function() {
             });
         });
     });
+
+    describe('#onRelease', function() {
+        it('should be called after releasing an object', function() {
+            var obj = null;
+            var onReleaseCalled = false;
+            pool._opts.onRelease = function(_obj) {
+                onReleaseCalled = true;
+                _obj.should.equal(obj);
+            };
+            return pool.acquire(function(_obj) {
+                obj = _obj;
+                return Promise.resolve();
+            }).then(function() {
+                onReleaseCalled.should.be.true();
+            });
+        });
+    });
 });
