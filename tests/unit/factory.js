@@ -16,7 +16,7 @@ describe('PromisePool.Factory', function() {
         var id = 0;
         pool = new PromisePool({
             name: 'test-pool',
-            max: 10,
+            max: 1,
             min: 0,
             create: function() { return {id: ++id}; },
             destroy: function(obj) {}
@@ -57,6 +57,17 @@ describe('PromisePool.Factory', function() {
                 return Promise.resolve();
             }).then(function() {
                 onReleaseCalled.should.be.true();
+            });
+        });
+
+        it('should not cause an error if immediately dispensing', function() {
+            pool._opts.onRelease = function() {};
+            return pool.acquire(function() {
+                pool.acquire(function() {
+                    return Promise.resolve();
+                });
+
+                return Promise.resolve();
             });
         });
     });
