@@ -1,4 +1,8 @@
 
+## v1.2.2 - 2016-10-08
+ - Fixed bug when `onRelease` is called with a waiting client.
+ - Library errors now exposed through promise returned from `acquire`.
+
 ## v1.2.1 - 2016-09-16
  - Fixed a bug when dispatching clients (#5).
  - Began linting the codebase.
